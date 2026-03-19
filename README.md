@@ -1,35 +1,118 @@
-#### Description
+### Кто за что отвечает
+**bot**   
+телграм бот, роуты, юз кейсы для команд бота
+бизнес логика для формирования сообщений бота
 
-Telegram bot for create one retreat. After creating a retreat, the user will receive reminders the day before and on the day of the retreat.  
-Schedule is configurable via config `notification -> retreatMessages` 
+**celery**   
+крон команды и переодические задания
 
-#### Features
+**services**  
+Интерфейс для сохранения/получения включащий логику сохранения/получения    
+Бизнес логика работы с сущностями   
+Работает независимо от того кто его испольузет - бот/рест/селери
 
-*[x] Save user data
-*[x] Create retreat on future date
-*[ ] Cancel future retreat
-*[ ] Set custom timezone
-*[ ] Add different type of retreat
+**db**   
+взаимодействие с БД   
+Описание моделей  
+крад операции
 
-#### For start.
-1. Create telegram bot
-2. set TB_TOKEN to `.env`
-3. `yarn --pure-lockfile`
-4. `yarn build`
-5. `yarn start`
-
-For localhost tunnel you can use
-http://localtunnel.github.io/www/
-
-
-Create database: TOTO not actual
-```sh
-psql -c "create user gorod with password '123qwe'" postgres
-psql -c "create database hmf owner gorod encoding 'UTF8' lc_collate 'ru_RU.utf8' LC_CTYPE 'ru_RU.UTF-8' template template0;" postgres
-or
-psql -c "create database hmf owner gorod encoding 'UTF8' lc_collate 'ru_RU.UTF-8' LC_CTYPE 'ru_RU.UTF-8' template template0;" postgres
-
-
-test db
-psql -c "create database hmf_test owner gorod encoding 'UTF8' lc_collate 'ru_RU.UTF-8' LC_CTYPE 'ru_RU.UTF-8' template template0;" postgres
+### Запуск приложения
 ```
+poetry run celery -A app.celery_app worker --loglevel=info
+poetry run celery -A app.celery_app worker --beat --loglevel=info
+poetry run celery -A app.celery_app purge
+
+
+poetry run celery -A app.monitor call check_site --args='[1]'
+
+
+celery -A <имя_вашего_приложения> inspect active
+
+
+celery -A <имя_вашего_приложения> inspect reserved
+
+
+poetry run   playwright install
+
+export PYTHONPATH=$(pwd)
+poetry run python app/bot/main.py
+```
+
+
+
+### Запуск с докером
+```bash
+# (С докером)
+cd /Users/dimapanov/git/my/monitor/docker
+docker-compose build
+docker-compose up -d
+docker-compose -f docker-monitor/docker-compose.yml build NAME
+docker-compose -f docker-monitor/docker-compose.yml up -d NAME
+
+
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml build
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml up -d
+
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml build NAME
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml up -d NAME
+
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml build celery_worker
+docker compose -f /opt/monitor/docker-monitor/docker-compose.yml up -d celery_worker
+
+
+docker-compose -f docker-monitor/celery-compose.yml build
+docker-compose -f docker-monitor/celery-compose.yml up -d
+
+```
+### Настройка пичарм
+```bash
+# (С докером)
+   poetry env info --path
+   или
+poetry config virtualenvs.in-project true
+<папка проекта>/.venv/bin/python
+
+
+
+1. Откройте `PyCharm`.
+2. Перейдите в меню **File** → **Settings** (или **PyCharm** → **Preferences** на macOS).
+3. Перейдите в раздел **Project** → **Python Interpreter**.
+4. Нажмите значок шестерёнки рядом со списком интерпретаторов и выберите **Add...**.
+5. В открывшемся окне выберите **Existing environment**.
+6. Укажите путь к интерпретатору внутри виртуального окружения из шага 2, например:
+
+
+
+   poetry show
+```
+
+### Запуск бота
+```
+ngrok http 8443
+ngrok http --url=anteater-clear-blindly.ngrok-free.app 8443
+```
+
+### Запуск тестов
+```
+poetry run pytest
+```
+
+### Линтеры 
+```
+poetry run black ./
+poetry run flake8
+poetry run mypy --ignore-missing-import --explicit-package-bases --check-untyped-defs ./
+```
+
+
+### Миграции ДБ
+```
+poetry run alembic revision --autogenerate -m "Initial"
+poetry run alembic revision --autogenerate -m "Описание изменений"
+poetry run alembic upgrade head
+poetry run alembic downgrade -1
+
+```
+
+   
+
