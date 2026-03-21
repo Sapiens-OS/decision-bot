@@ -22,7 +22,10 @@ from app.core.config import config as app_config
 config = context.config
 
 # Set the sqlalchemy.url from our app config
-config.set_main_option("sqlalchemy.url", app_config.database_uri)
+database_url = app_config.database_uri
+if database_url.startswith("postgresql+asyncpg://"):
+    database_url = database_url.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
