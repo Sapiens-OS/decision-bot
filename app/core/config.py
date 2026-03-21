@@ -6,6 +6,7 @@ from app.config import (
     WEBHOOK_PORT,
     REDIS_URL,
     OPENAI_API_KEY,
+    OPENAI_BASE_URL,
     OPENAI_MODEL,
     CELERY_BROKER_URL,
     CELERY_RESULT_BACKEND,
@@ -29,6 +30,7 @@ class Config:
     redis_url: str = REDIS_URL
 
     # OpenAI
+    openai_base_url: str = OPENAI_BASE_URL
     openai_api_key: str = OPENAI_API_KEY
     openai_model: str = OPENAI_MODEL
 

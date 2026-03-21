@@ -44,8 +44,8 @@ SYSTEM_PROMPT = """Ты — Decision Assistant в системе Sapiens OS.
 class OpenAILLMService(ILLMService):
     """OpenAI LLM service implementation"""
 
-    def __init__(self, api_key: str, model: str = "gpt-4o-mini"):
-        self.client = AsyncOpenAI(api_key=api_key)
+    def __init__(self, api_key: str, model: str = "gpt-4o-mini", base_url: str | None = None):
+        self.client = AsyncOpenAI(api_key=api_key, base_url=base_url)
         self.model = model
         logger.info(f"OpenAI LLM service initialized with model: {model}")
 

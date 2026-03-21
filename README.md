@@ -247,17 +247,18 @@ ngrok http --url=your-domain.ngrok-free.app 8443
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable | Description                  | Default |
+|----------|------------------------------|---------|
 | DATABASE_URI | PostgreSQL connection string | postgresql+asyncpg://user:password@localhost:5432/sapiens_os |
-| BOT_TOKEN | Telegram bot token | - |
-| BOT_WEBHOOK_URL | Webhook URL (optional) | - |
-| BOT_WEBHOOK_PORT | Webhook port | 8443 |
-| REDIS_URL | Redis connection string | redis://localhost:6379/0 |
-| OPENAI_API_KEY | OpenAI API key | - |
-| OPENAI_MODEL | OpenAI model | gpt-4o-mini |
-| CELERY_BROKER_URL | Celery broker URL | redis://localhost:6379/1 |
-| CELERY_RESULT_BACKEND | Celery result backend | redis://localhost:6379/2 |
+| BOT_TOKEN | Telegram bot token           | - |
+| BOT_WEBHOOK_URL | Webhook URL (optional)       | - |
+| BOT_WEBHOOK_PORT | Webhook port                 | 8443 |
+| REDIS_URL | Redis connection string      | redis://localhost:6379/0 |
+| OPENAI_BASE_URL | Optiona OpenAI Base Url      | - |
+| OPENAI_API_KEY | OpenAI API key               | - |
+| OPENAI_MODEL | OpenAI model                 | gpt-4o-mini |
+| CELERY_BROKER_URL | Celery broker URL            | redis://localhost:6379/1 |
+| CELERY_RESULT_BACKEND | Celery result backend        | redis://localhost:6379/2 |
 
 ## License
 

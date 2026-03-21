@@ -4,7 +4,6 @@ from app.core.container import Container
 from app.core.logger import logger
 from app.core.config import config
 from app.bot.init import bot
-from app.bot.keyboards.main_keyboard import get_main_menu
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 

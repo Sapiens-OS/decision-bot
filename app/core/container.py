@@ -53,6 +53,7 @@ class Container(containers.DeclarativeContainer):
         OpenAILLMService,
         api_key=config.openai_api_key,
         model=config.openai_model,
+        base_url=config.openai_base_url,
     )
 
     decision_service = providers.Factory(
