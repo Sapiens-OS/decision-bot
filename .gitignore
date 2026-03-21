@@ -4,19 +4,21 @@ __pycache__/
 *.pyo
 *.pyd
 *.db
+
+# Environment
 .env
 .venv
-# Virtual Environment
 venv/
 env/
-.venv/
 .env/
 
+# Reference project
 public/
+public1/
 
 # Distribution / Build directories
 build/
-public/dist/
+dist/
 *.egg-info/
 .eggs/
 
@@ -31,13 +33,25 @@ htmlcov/
 .pytest_cache/
 
 # IDE files
-*.idea/
-*.vscode/
+.idea/
+.vscode/
 
 # OS-specific files
 .DS_Store
 Thumbs.db
 
-# Other
+# Logs
 *.log
 *.bak
+logs/
+
+# Database
+*.db
+*.sqlite
+
+# Docker
+docker-compose.override.yml
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
