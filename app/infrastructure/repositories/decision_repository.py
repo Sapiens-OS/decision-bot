@@ -1,6 +1,6 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import async_sessionmaker
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from app.infrastructure.models.decision import Decision, DecisionStatus
 from app.infrastructure.repositories.interfaces.decision_repository_interface import IDecisionRepository
 
@@ -74,7 +74,7 @@ class DecisionRepository(IDecisionRepository):
     async def get_decisions_for_follow_up(self, days_ago: int) -> list[Decision]:
         """Get decisions that need follow-up"""
         async with self.session_factory() as session:
-            target_date = datetime.utcnow() - timedelta(days=days_ago)
+            target_date = datetime.now(UTC) - timedelta(days=days_ago)
             # Get decisions created around the target date (±12 hours)
             start_date = target_date - timedelta(hours=12)
             end_date = target_date + timedelta(hours=12)

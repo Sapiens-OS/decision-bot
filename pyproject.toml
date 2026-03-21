@@ -24,6 +24,7 @@ dependencies = [
     "flake8 (>=7.1.1,<8.0.0)",
     "black (>=25.1.0,<26.0.0)",
     "mypy (>=1.15.0,<2.0.0)",
+    "aiosqlite (>=0.21.0,<0.22.0)",
 ]
 
 
@@ -43,4 +44,3 @@ line-length = 120
 
 [tool.poetry.group.dev.dependencies]
 types-requests = "^2.32.0.20241016"
-
