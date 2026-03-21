@@ -32,17 +32,17 @@ class Container(containers.DeclarativeContainer):
 
     user_repository = providers.Factory(
         UserRepository,
-        session_factory=db.provided.session,
+        session_factory=db.provided.session_factory,
     )
 
     decision_repository = providers.Factory(
         DecisionRepository,
-        session_factory=db.provided.session,
+        session_factory=db.provided.session_factory,
     )
 
     outcome_repository = providers.Factory(
         OutcomeRepository,
-        session_factory=db.provided.session,
+        session_factory=db.provided.session_factory,
     )
 
     # Services
