@@ -12,9 +12,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.infrastructure.models.base import Base
-from app.infrastructure.models.user import User
-from app.infrastructure.models.decision import Decision
-from app.infrastructure.models.outcome import Outcome
+from app.infrastructure.models.user import User # noqa
+from app.infrastructure.models.decision import Decision # noqa
+from app.infrastructure.models.outcome import Outcome # noqa
+
 from app.core.config import config as app_config
 
 # this is the Alembic Config object, which provides

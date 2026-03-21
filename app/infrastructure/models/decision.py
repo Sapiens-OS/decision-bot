@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from enum import Enum as PyEnum
 from app.infrastructure.models.base import Base
+from ..utils.safe_enum import SafeEnumType
 
 
 class DecisionStatus(PyEnum):
@@ -24,7 +25,7 @@ class Decision(Base):
     analysis: Mapped[str | None] = mapped_column(Text, nullable=True)
     selected_option: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[DecisionStatus] = mapped_column(
-        Enum(DecisionStatus), default=DecisionStatus.NEW, nullable=False
+        SafeEnumType(DecisionStatus), default=DecisionStatus.NEW, nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
