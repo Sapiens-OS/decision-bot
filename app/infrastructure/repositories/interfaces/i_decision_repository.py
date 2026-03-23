@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from app.infrastructure.models.decision import Decision, DecisionStatus
-from datetime import datetime
 
 
 class IDecisionRepository(ABC):

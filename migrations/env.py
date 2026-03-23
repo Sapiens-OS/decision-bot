@@ -8,15 +8,17 @@ from alembic import context
 import sys
 import os
 
-# Add the parent directory to the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from app.infrastructure.models.base import Base
-from app.infrastructure.models.user import User # noqa
-from app.infrastructure.models.decision import Decision # noqa
-from app.infrastructure.models.outcome import Outcome # noqa
+
+from app.infrastructure.models.base import Base # noqa
+from app.infrastructure.models.user import User  # noqa
+from app.infrastructure.models.decision import Decision  # noqa
+from app.infrastructure.models.outcome import Outcome  # noqa
 
 from app.core.config import config as app_config
+
+# Add the parent directory to the path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -83,9 +85,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

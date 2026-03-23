@@ -13,6 +13,7 @@ class Container(containers.DeclarativeContainer):
             "app.bot.handlers.history_handler",
             "app.bot.use_cases.new_decision_use_case",
             "app.tasks.follow_up",
+            "app.bot.handlers.outcome_handler",
         ]
     )
 

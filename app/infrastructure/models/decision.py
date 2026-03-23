@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Text, DateTime, ForeignKey, Enum
+from sqlalchemy import Integer, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from enum import Enum as PyEnum
@@ -30,10 +30,8 @@ class Decision(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    user: Mapped["User"] = relationship("User", back_populates="decisions")
-    outcomes: Mapped[list["Outcome"]] = relationship(
-        "Outcome", back_populates="decision", cascade="all, delete-orphan"
-    )
+    user = relationship("User", back_populates="decisions")
+    outcomes = relationship("Outcome", back_populates="decision", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Decision(id={self.id}, user_id={self.user_id}, status={self.status})>"

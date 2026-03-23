@@ -2,7 +2,7 @@ from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from datetime import datetime, timedelta, UTC
 from app.infrastructure.models.decision import Decision, DecisionStatus
-from app.infrastructure.repositories.interfaces.decision_repository_interface import IDecisionRepository
+from app.infrastructure.repositories.interfaces.i_decision_repository import IDecisionRepository
 
 
 class DecisionRepository(IDecisionRepository):
@@ -43,10 +43,7 @@ class DecisionRepository(IDecisionRepository):
         """Get user decisions"""
         async with self.session_factory() as session:
             result = await session.execute(
-                select(Decision)
-                .where(Decision.user_id == user_id)
-                .order_by(Decision.created_at.desc())
-                .limit(limit)
+                select(Decision).where(Decision.user_id == user_id).order_by(Decision.created_at.desc()).limit(limit)
             )
             return list(result.scalars().all())
 

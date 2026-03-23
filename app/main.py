@@ -56,13 +56,6 @@ async def main():
     """Main function"""
     # Initialize container
     container = Container()
-    container.wire(modules=[
-        "app.bot.handlers.start_handler",
-        "app.bot.handlers.new_decision_handler",
-        "app.bot.handlers.history_handler",
-        "app.bot.handlers.outcome_handler",
-        "app.bot.use_cases.new_decision_use_case",
-    ])
 
     # Initialize database
     db = container.db()

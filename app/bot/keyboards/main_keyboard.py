@@ -35,9 +35,7 @@ def get_decision_list_keyboard(decisions: list) -> InlineKeyboardMarkup:
     for decision in decisions:
         # Truncate problem text to 50 chars
         text = decision.problem[:50] + "..." if len(decision.problem) > 50 else decision.problem
-        keyboard.append(
-            [InlineKeyboardButton(text=text, callback_data=f"decision:{decision.id}")]
-        )
+        keyboard.append([InlineKeyboardButton(text=text, callback_data=f"decision:{decision.id}")])
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 

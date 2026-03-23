@@ -16,7 +16,7 @@ class Outcome(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    decision: Mapped["Decision"] = relationship("Decision", back_populates="outcomes")
+    decision = relationship("Decision", back_populates="outcomes")
 
     def __repr__(self):
         return f"<Outcome(id={self.id}, decision_id={self.decision_id}, score={self.score})>"

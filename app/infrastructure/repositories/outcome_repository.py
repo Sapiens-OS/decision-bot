@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from app.infrastructure.models.outcome import Outcome
-from app.infrastructure.repositories.interfaces.outcome_repository_interface import IOutcomeRepository
+from app.infrastructure.repositories.interfaces.i_outcome_repository import IOutcomeRepository
 
 
 class OutcomeRepository(IOutcomeRepository):
@@ -23,8 +23,6 @@ class OutcomeRepository(IOutcomeRepository):
         """Get outcomes by decision ID"""
         async with self.session_factory() as session:
             result = await session.execute(
-                select(Outcome)
-                .where(Outcome.decision_id == decision_id)
-                .order_by(Outcome.created_at.desc())
+                select(Outcome).where(Outcome.decision_id == decision_id).order_by(Outcome.created_at.desc())
             )
             return list(result.scalars().all())

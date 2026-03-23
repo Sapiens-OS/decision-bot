@@ -1,5 +1,5 @@
 from openai import AsyncOpenAI
-from app.services.interfaces.llm_service_interface import ILLMService
+from app.services.interfaces.i_llm_service import ILLMService
 from app.core.logger import logger
 
 

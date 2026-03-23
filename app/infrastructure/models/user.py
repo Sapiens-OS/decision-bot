@@ -15,9 +15,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    decisions: Mapped[list["Decision"]] = relationship(
-        "Decision", back_populates="user", cascade="all, delete-orphan"
-    )
+    decisions = relationship("Decision", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, telegram_id={self.telegram_id}, username={self.username})>"

@@ -1,27 +1,26 @@
 import asyncio
+from dependency_injector.wiring import inject, Provide
+from app.services.interfaces.i_decision_service import IDecisionService
 from app.tasks.celery_app import celery_app
-from app.core.container import Container
 from app.core.logger import logger
 from app.core.config import config
 from app.bot.init import bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from app.core.container import Container
 
 
 @celery_app.task(name="app.tasks.follow_up.check_follow_up_task")
-def check_follow_up_task():
+@inject
+def check_follow_up_task(
+    decision_service: IDecisionService = Provide[Container.decision_service],
+):
     """Check decisions that need follow-up (Celery task)"""
-    asyncio.run(check_follow_up())
+    asyncio.run(check_follow_up(decision_service))
 
 
-async def check_follow_up():
+async def check_follow_up(decision_service: IDecisionService):
     """Check decisions that need follow-up"""
     logger.info("Checking decisions for follow-up...")
-
-    # Initialize container
-    container = Container()
-
-    # Get decision service
-    decision_service = container.decision_service()
 
     # Check each interval
     for days in config.follow_up_intervals:

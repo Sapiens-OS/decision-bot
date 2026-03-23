@@ -1,9 +1,9 @@
 import os
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
+from app.tasks import follow_up
 
 os.environ.setdefault("BOT_TOKEN", "123456:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-from app.tasks import follow_up
 
 
 def _make_decision(decision_id: int, telegram_id: int = 100):
@@ -45,7 +45,7 @@ async def test_check_follow_up_iterates_intervals_and_sends_messages(monkeypatch
     monkeypatch.setattr(follow_up.config, "follow_up_intervals", [7, 30])
     monkeypatch.setattr(follow_up, "send_follow_up_message", send_mock)
 
-    await follow_up.check_follow_up()
+    await follow_up.check_follow_up(decision_service)
 
     assert decision_service.get_decisions_for_follow_up.await_count == 2
     decision_service.get_decisions_for_follow_up.assert_any_await(7)
@@ -66,7 +66,7 @@ async def test_check_follow_up_continues_when_sending_fails(monkeypatch):
     monkeypatch.setattr(follow_up.config, "follow_up_intervals", [7])
     monkeypatch.setattr(follow_up, "send_follow_up_message", send_mock)
 
-    await follow_up.check_follow_up()
+    await follow_up.check_follow_up(decision_service)
 
     assert send_mock.await_count == 2
 

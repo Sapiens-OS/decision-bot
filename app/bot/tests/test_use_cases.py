@@ -40,13 +40,11 @@ async def test_process_problem_stores_problem_and_user_and_moves_to_context_stat
     message = DummyMessage(text="Новая задача", user_id=100, username="bob")
     state = DummyState()
     user_repository = SimpleNamespace(get_or_create=AsyncMock(return_value=SimpleNamespace(id=55)))
-    decision_service = SimpleNamespace()
 
     await process_problem(
         message=message,
         state=state,
         user_repository=user_repository,
-        decision_service=decision_service,
     )
 
     user_repository.get_or_create.assert_awaited_once_with(telegram_id=100, username="bob")

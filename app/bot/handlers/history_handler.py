@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from dependency_injector.wiring import inject, Provide
 
 from app.bot.keyboards.main_keyboard import get_main_menu, get_decision_list_keyboard
-from app.services.decision_service import DecisionService
+from app.services.interfaces.i_decision_service import IDecisionService
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.core.container import Container
 from app.core.logger import logger
@@ -18,7 +18,7 @@ router = Router()
 async def cmd_history(
     message: Message,
     user_repository: UserRepository = Provide[Container.user_repository],
-    decision_service: DecisionService = Provide[Container.decision_service],
+    decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Handle /history command"""
     # Get user
@@ -26,8 +26,7 @@ async def cmd_history(
 
     if not user:
         await message.answer(
-            "У вас пока нет сохраненных решений.\n\n"
-            "Создайте первое решение с помощью команды /new",
+            "У вас пока нет сохраненных решений.\n\n" "Создайте первое решение с помощью команды /new",
             reply_markup=get_main_menu(),
         )
         return
@@ -37,15 +36,13 @@ async def cmd_history(
 
     if not decisions:
         await message.answer(
-            "У вас пока нет сохраненных решений.\n\n"
-            "Создайте первое решение с помощью команды /new",
+            "У вас пока нет сохраненных решений.\n\n" "Создайте первое решение с помощью команды /new",
             reply_markup=get_main_menu(),
         )
         return
 
     await message.answer(
-        f"📚 Ваши решения (всего: {len(decisions)}):\n\n"
-        "Выберите решение, чтобы посмотреть подробности:",
+        f"📚 Ваши решения (всего: {len(decisions)}):\n\n" "Выберите решение, чтобы посмотреть подробности:",
         reply_markup=get_decision_list_keyboard(decisions),
     )
 
@@ -54,7 +51,7 @@ async def cmd_history(
 @inject
 async def show_decision(
     callback: CallbackQuery,
-    decision_service: DecisionService = Provide[Container.decision_service],
+    decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Show decision details"""
     decision_id = int(callback.data.split(":")[1])

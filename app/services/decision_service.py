@@ -1,12 +1,13 @@
-from app.infrastructure.repositories.interfaces.decision_repository_interface import IDecisionRepository
-from app.infrastructure.repositories.interfaces.outcome_repository_interface import IOutcomeRepository
-from app.services.interfaces.llm_service_interface import ILLMService
+from app.infrastructure.repositories.interfaces.i_decision_repository import IDecisionRepository
+from app.infrastructure.repositories.interfaces.i_outcome_repository import IOutcomeRepository
+from app.services.interfaces.i_llm_service import ILLMService
+from app.services.interfaces.i_decision_service import IDecisionService
 from app.infrastructure.models.decision import Decision, DecisionStatus
 from app.infrastructure.models.outcome import Outcome
 from app.core.logger import logger
 
 
-class DecisionService:
+class DecisionService(IDecisionService):
     """Decision service for business logic"""
 
     def __init__(

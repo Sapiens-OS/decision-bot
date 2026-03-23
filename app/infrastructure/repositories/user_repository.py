@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from app.infrastructure.models.user import User
-from app.infrastructure.repositories.interfaces.user_repository_interface import IUserRepository
+from app.infrastructure.repositories.interfaces.i_user_repository import IUserRepository
 
 
 class UserRepository(IUserRepository):

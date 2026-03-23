@@ -1,4 +1,3 @@
-import redis.asyncio as redis
 from aiogram import Bot
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.fsm.storage.memory import MemoryStorage

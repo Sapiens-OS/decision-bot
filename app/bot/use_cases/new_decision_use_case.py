@@ -1,14 +1,14 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from dependency_injector.wiring import inject, Provide
 
 from app.bot.states import NewDecisionStates
 from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard
-from app.services.decision_service import DecisionService
-from app.infrastructure.repositories.user_repository import UserRepository
+from app.services.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
+from app.infrastructure.repositories.interfaces.i_user_repository import IUserRepository
 
 router = Router()
 
@@ -18,8 +18,7 @@ router = Router()
 async def process_problem(
     message: Message,
     state: FSMContext,
-    user_repository: UserRepository = Provide[Container.user_repository],
-    decision_service: DecisionService = Provide[Container.decision_service],
+    user_repository: IUserRepository = Provide[Container.user_repository],
 ):
     """Process problem description"""
     problem = message.text
@@ -35,8 +34,7 @@ async def process_problem(
 
     # Ask for context
     await message.answer(
-        "Что для вас важно в этой ситуации? Есть ли дополнительный контекст?\n\n"
-        "Вы можете пропустить этот шаг.",
+        "Что для вас важно в этой ситуации? Есть ли дополнительный контекст?\n\n" "Вы можете пропустить этот шаг.",
         reply_markup=get_skip_keyboard(),
     )
     await state.set_state(NewDecisionStates.waiting_for_context)
@@ -47,7 +45,7 @@ async def process_problem(
 async def process_context(
     message: Message,
     state: FSMContext,
-    decision_service: DecisionService = Provide[Container.decision_service],
+    decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Process context and create decision"""
     data = await state.get_data()
@@ -99,7 +97,7 @@ async def process_context(
 async def process_selection(
     message: Message,
     state: FSMContext,
-    decision_service: DecisionService = Provide[Container.decision_service],
+    decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Process selected option"""
     data = await state.get_data()

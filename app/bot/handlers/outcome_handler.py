@@ -5,7 +5,7 @@ from dependency_injector.wiring import inject, Provide
 
 from app.bot.states import OutcomeStates
 from app.bot.keyboards.main_keyboard import get_main_menu, get_outcome_score_keyboard
-from app.services.decision_service import DecisionService
+from app.services.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
 
@@ -19,8 +19,7 @@ async def start_outcome_feedback(callback: CallbackQuery, state: FSMContext):
 
     await state.update_data(decision_id=decision_id)
     await callback.message.answer(
-        "Расскажите, как сработало ваше решение?\n\n"
-        "Что произошло? Что изменилось?",
+        "Расскажите, как сработало ваше решение?\n\n" "Что произошло? Что изменилось?",
         reply_markup=get_main_menu(),
     )
     await state.set_state(OutcomeStates.waiting_for_feedback)
@@ -45,7 +44,7 @@ async def process_outcome_feedback(message: Message, state: FSMContext):
 async def process_outcome_score(
     callback: CallbackQuery,
     state: FSMContext,
-    decision_service: DecisionService = Provide[Container.decision_service],
+    decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Process outcome score"""
     score = int(callback.data.split(":")[1])
@@ -62,8 +61,7 @@ async def process_outcome_score(
         )
 
         await callback.message.answer(
-            "✅ Спасибо за обратную связь!\n\n"
-            "Ваш опыт помогает делать решения более осознанными.",
+            "✅ Спасибо за обратную связь!\n\n" "Ваш опыт помогает делать решения более осознанными.",
             reply_markup=get_main_menu(),
         )
 
