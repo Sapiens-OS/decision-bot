@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from openai.types.chat import ChatCompletionMessageParam
 
 
 class ILLMService(ABC):
@@ -14,6 +15,6 @@ class ILLMService(ABC):
         pass
 
     @abstractmethod
-    async def chat(self, messages: list[dict[str, str]]) -> str:
+    async def chat(self, messages: list[ChatCompletionMessageParam]) -> str:
         """Send a chat request to the LLM"""
         pass

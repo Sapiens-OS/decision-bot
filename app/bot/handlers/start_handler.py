@@ -17,6 +17,9 @@ async def cmd_start(
     user_repository: UserRepository = Provide[Container.user_repository],
 ):
     """Handle /start command"""
+    if not message.from_user:
+        return
+
     # Get or create user
     await user_repository.get_or_create(
         telegram_id=message.from_user.id,

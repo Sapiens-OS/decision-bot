@@ -1,4 +1,5 @@
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessageParam
 from app.services.interfaces.i_llm_service import ILLMService
 from app.core.logger import logger
 
@@ -55,7 +56,7 @@ class OpenAILLMService(ILLMService):
         context: dict[str, str] | None = None,
     ) -> str:
         """Analyze a decision and return structured response"""
-        messages = [
+        messages: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Помоги мне разобрать следующую ситуацию:\n\n{problem}"},
         ]
@@ -66,7 +67,7 @@ class OpenAILLMService(ILLMService):
 
         return await self.chat(messages)
 
-    async def chat(self, messages: list[dict[str, str]]) -> str:
+    async def chat(self, messages: list[ChatCompletionMessageParam]) -> str:
         """Send a chat request to the LLM"""
         try:
             response = await self.client.chat.completions.create(
@@ -75,7 +76,7 @@ class OpenAILLMService(ILLMService):
                 temperature=0.7,
                 max_tokens=1500,
             )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
         except Exception as e:
             logger.error(f"Error calling OpenAI API: {e}")
             raise

@@ -23,7 +23,8 @@ async def check_follow_up(decision_service: IDecisionService):
     logger.info("Checking decisions for follow-up...")
 
     # Check each interval
-    for days in config.follow_up_intervals:
+    intervals = config.follow_up_intervals or []
+    for days in intervals:
         logger.info(f"Checking decisions from {days} days ago...")
 
         # Get decisions for follow-up

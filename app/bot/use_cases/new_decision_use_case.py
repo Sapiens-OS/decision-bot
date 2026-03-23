@@ -1,3 +1,4 @@
+from typing import Any, cast
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -21,7 +22,10 @@ async def process_problem(
     user_repository: IUserRepository = Provide[Container.user_repository],
 ):
     """Process problem description"""
-    problem = message.text
+    if not message.from_user:
+        return
+
+    problem = message.text or ""
 
     # Get or create user
     user = await user_repository.get_or_create(
@@ -53,9 +57,9 @@ async def process_context(
     user_id = data["user_id"]
 
     # Get context
-    context = None
+    context: dict[str, str] | None = None
     if message.text != "⏭️ Пропустить":
-        context = {"additional_info": message.text}
+        context = {"additional_info": message.text or ""}
 
     # Show loading message
     loading_msg = await message.answer("🤔 Анализирую ситуацию...", reply_markup=get_main_menu())
@@ -106,7 +110,7 @@ async def process_selection(
 
     try:
         # Update decision with selected option
-        await decision_service.select_option(decision_id, selected_option)
+        await decision_service.select_option(decision_id, message.text or "")
 
         await message.answer(
             f"✅ Отлично! Ваше решение сохранено:\n\n"

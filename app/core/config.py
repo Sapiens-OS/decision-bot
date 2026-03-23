@@ -39,7 +39,7 @@ class Config:
     celery_result_backend: str = CELERY_RESULT_BACKEND
 
     # Follow-up
-    follow_up_intervals: list[int] = None
+    follow_up_intervals: list[int] | None = None
 
     def __post_init__(self):
         if self.follow_up_intervals is None:

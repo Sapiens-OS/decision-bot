@@ -15,6 +15,9 @@ router = Router()
 @router.callback_query(F.data.startswith("outcome:"))
 async def start_outcome_feedback(callback: CallbackQuery, state: FSMContext):
     """Start outcome feedback process"""
+    if not callback.data or not callback.message:
+        return
+
     decision_id = int(callback.data.split(":")[1])
 
     await state.update_data(decision_id=decision_id)
@@ -47,6 +50,9 @@ async def process_outcome_score(
     decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Process outcome score"""
+    if not callback.data or not callback.message:
+        return
+
     score = int(callback.data.split(":")[1])
     data = await state.get_data()
     decision_id = data["decision_id"]

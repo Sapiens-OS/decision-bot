@@ -21,6 +21,9 @@ async def cmd_history(
     decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Handle /history command"""
+    if not message.from_user:
+        return
+
     # Get user
     user = await user_repository.get_by_telegram_id(message.from_user.id)
 
@@ -54,6 +57,9 @@ async def show_decision(
     decision_service: IDecisionService = Provide[Container.decision_service],
 ):
     """Show decision details"""
+    if not callback.data or not callback.message:
+        return
+
     decision_id = int(callback.data.split(":")[1])
 
     try:

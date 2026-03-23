@@ -1,6 +1,6 @@
 import os
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, ANY
 from app.tasks import follow_up
 
 os.environ.setdefault("BOT_TOKEN", "123456:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
@@ -22,9 +22,15 @@ async def test_send_follow_up_message_calls_bot_with_expected_payload(monkeypatc
 
     await follow_up.send_follow_up_message(decision, days=7)
 
-    send_message.assert_awaited_once()
-    kwargs = send_message.await_args.kwargs
-    assert kwargs["chat_id"] == 12345
+    send_message.assert_awaited_once_with(
+        chat_id=12345,
+        text=ANY,
+        reply_markup=ANY,
+    )
+    # Get the actual call to check the content
+    await_args = send_message.await_args
+    assert await_args is not None
+    args, kwargs = await_args
     assert "Прошло 7 дней" in kwargs["text"]
     assert "Проблема" in kwargs["text"]
     assert "Выбор" in kwargs["text"]
@@ -35,9 +41,8 @@ async def test_send_follow_up_message_calls_bot_with_expected_payload(monkeypatc
 async def test_check_follow_up_iterates_intervals_and_sends_messages(monkeypatch):
     d1 = _make_decision(1)
     d2 = _make_decision(2)
-    decision_service = SimpleNamespace(
-        get_decisions_for_follow_up=AsyncMock(side_effect=[[d1], [d2]]),
-    )
+    decision_service = AsyncMock()
+    decision_service.get_decisions_for_follow_up.side_effect = [[d1], [d2]]
     container = SimpleNamespace(decision_service=lambda: decision_service)
 
     send_mock = AsyncMock()
@@ -58,7 +63,8 @@ async def test_check_follow_up_iterates_intervals_and_sends_messages(monkeypatch
 async def test_check_follow_up_continues_when_sending_fails(monkeypatch):
     d1 = _make_decision(1)
     d2 = _make_decision(2)
-    decision_service = SimpleNamespace(get_decisions_for_follow_up=AsyncMock(return_value=[d1, d2]))
+    decision_service = AsyncMock()
+    decision_service.get_decisions_for_follow_up.return_value = [d1, d2]
     container = SimpleNamespace(decision_service=lambda: decision_service)
 
     send_mock = AsyncMock(side_effect=[RuntimeError("tg fail"), None])
