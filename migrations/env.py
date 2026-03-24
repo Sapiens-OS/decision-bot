@@ -9,8 +9,7 @@ import sys
 import os
 
 
-
-from app.infrastructure.models.base import Base # noqa
+from app.infrastructure.models.base import Base  # noqa
 from app.infrastructure.models.user import User  # noqa
 from app.infrastructure.models.decision import Decision  # noqa
 from app.infrastructure.models.outcome import Outcome  # noqa

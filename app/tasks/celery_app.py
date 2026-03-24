@@ -27,4 +27,4 @@ celery_app.conf.beat_schedule = {
 }
 
 # Import tasks
-from app.tasks import follow_up # noqa
+from app.tasks import follow_up  # noqa
