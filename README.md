@@ -262,4 +262,4 @@ ngrok http --url=your-domain.ngrok-free.app 8443
 
 ## License
 
-MIT
+Apache License Version 2.0
