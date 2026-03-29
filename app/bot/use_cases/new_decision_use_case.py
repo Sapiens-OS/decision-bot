@@ -79,6 +79,7 @@ async def process_context(
             f"✅ Вот мой анализ:\n\n{decision.analysis}\n\n"
             f"Какой вариант вы выбираете? Напишите его или опишите свой:",
             reply_markup=get_main_menu(),
+            parse_mode="Markdown",
         )
 
         # Save decision ID to state
@@ -117,6 +118,7 @@ async def process_selection(
             f"Я напомню вам об этом решении через 7, 30 и 90 дней, "
             f"чтобы понять, как всё сработало.",
             reply_markup=get_main_menu(),
+            parse_mode="Markdown",
         )
 
     except Exception as e:
