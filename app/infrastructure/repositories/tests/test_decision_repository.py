@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, UTC
 
 from sqlalchemy import update
 
-from app.infrastructure.models.decision import Decision, DecisionStatus
+from app.infrastructure.models.decision import Decision
+from app.services.dto import DecisionStatus
 
 
 async def _create_user(user_repository, telegram_id: int):

@@ -5,10 +5,10 @@ from dependency_injector.wiring import inject, Provide
 
 from app.bot.states import NewDecisionStates
 from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard
-from app.services.interfaces.i_decision_service import IDecisionService
+from app.bot.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
-from app.infrastructure.repositories.interfaces.i_user_repository import IUserRepository
+from app.services.interfaces.i_user_repository import IUserRepository
 
 router = Router()
 

@@ -1,6 +1,7 @@
 import asyncio
 from dependency_injector.wiring import inject, Provide
-from app.services.interfaces.i_decision_service import IDecisionService
+from app.services.dto import DecisionDTO
+from app.bot.interfaces.i_decision_service import IDecisionService
 from app.tasks.celery_app import celery_app
 from app.core.logger import logger
 from app.core.config import config
@@ -42,10 +43,14 @@ async def check_follow_up(decision_service: IDecisionService):
     logger.info("Follow-up check completed")
 
 
-async def send_follow_up_message(decision, days: int):
+async def send_follow_up_message(decision: DecisionDTO, days: int):
     """Send follow-up message to user"""
     # Get user telegram_id
-    user = decision.user
+    telegram_id = decision.user_telegram_id
+
+    if not telegram_id:
+        logger.error(f"No telegram_id for decision {decision.id}")
+        return
 
     # Prepare message
     text = (
@@ -64,9 +69,9 @@ async def send_follow_up_message(decision, days: int):
 
     # Send message
     await bot.send_message(
-        chat_id=user.telegram_id,
+        chat_id=telegram_id,
         text=text,
         reply_markup=keyboard,
     )
 
-    logger.info(f"Follow-up sent to user {user.telegram_id} for decision {decision.id}")
+    logger.info(f"Follow-up sent to user {telegram_id} for decision {decision.id}")

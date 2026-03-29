@@ -11,7 +11,7 @@ def _make_decision(decision_id: int, telegram_id: int = 100):
         id=decision_id,
         problem="Проблема",
         selected_option="Выбор",
-        user=SimpleNamespace(telegram_id=telegram_id),
+        user_telegram_id=telegram_id,
     )
 
 

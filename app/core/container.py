@@ -2,6 +2,9 @@ from dependency_injector import containers, providers
 from app.core.config import config
 from app.infrastructure.db.database import Database
 
+from app.bot.interfaces.i_decision_service import IDecisionService
+from app.bot.interfaces.i_llm_service import ILLMService
+
 
 class Container(containers.DeclarativeContainer):
     """Dependency Injection Container"""
@@ -50,14 +53,14 @@ class Container(containers.DeclarativeContainer):
     from app.services.llm_service import OpenAILLMService
     from app.services.decision_service import DecisionService
 
-    llm_service = providers.Factory(
+    llm_service: providers.Factory[ILLMService] = providers.Factory(
         OpenAILLMService,
         api_key=config.openai_api_key,
         model=config.openai_model,
         base_url=config.openai_base_url,
     )
 
-    decision_service = providers.Factory(
+    decision_service: providers.Factory[IDecisionService] = providers.Factory(
         DecisionService,
         decision_repository=decision_repository,
         outcome_repository=outcome_repository,

@@ -14,6 +14,7 @@ env/
 
 # Reference project
 public/
+sapiens_core/
 
 # Distribution / Build directories
 build/

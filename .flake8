@@ -5,4 +5,5 @@ exclude =
    __pycache__,
    ./db/models/__init__.py,
    venv,
-   .venv
+   .venv,
+   sapiens_core

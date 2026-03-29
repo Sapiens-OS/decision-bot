@@ -1,5 +1,4 @@
 from sqlalchemy import func, select
-
 from app.infrastructure.models.user import User
 
 

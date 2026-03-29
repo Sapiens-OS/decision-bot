@@ -4,7 +4,8 @@ from aiogram.types import Message, CallbackQuery
 from dependency_injector.wiring import inject, Provide
 
 from app.bot.keyboards.main_keyboard import get_main_menu, get_decision_list_keyboard
-from app.services.interfaces.i_decision_service import IDecisionService
+from app.bot.interfaces.i_decision_service import IDecisionService
+from app.services.dto import DecisionStatus
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.core.container import Container
 from app.core.logger import logger
@@ -71,13 +72,13 @@ async def show_decision(
 
         # Format decision details
         status_emoji = {
-            "new": "🆕",
-            "decided": "✅",
-            "completed": "🏁",
+            DecisionStatus.NEW: "🆕",
+            DecisionStatus.DECIDED: "✅",
+            DecisionStatus.COMPLETED: "🏁",
         }
 
         text = (
-            f"{status_emoji.get(decision.status.value, '❓')} Решение #{decision.id}\n\n"
+            f"{status_emoji.get(decision.status, '❓')} Решение #{decision.id}\n\n"
             f"📅 Дата: {decision.created_at.strftime('%d.%m.%Y %H:%M')}\n\n"
             f"📌 Проблема:\n{decision.problem}\n\n"
         )

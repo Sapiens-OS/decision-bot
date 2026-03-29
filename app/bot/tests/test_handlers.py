@@ -111,7 +111,7 @@ async def test_show_decision_success_sends_details():
     callback = DummyCallback(data="decision:15")
     decision = SimpleNamespace(
         id=15,
-        status=SimpleNamespace(value="decided"),
+        status="decided",
         created_at=datetime(2026, 1, 1, 12, 0),
         problem="Проблема",
         analysis="Анализ",

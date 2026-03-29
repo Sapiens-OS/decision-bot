@@ -1,6 +1,6 @@
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
-from app.services.interfaces.i_llm_service import ILLMService
+from app.bot.interfaces.i_llm_service import ILLMService
 from app.core.logger import logger
 
 

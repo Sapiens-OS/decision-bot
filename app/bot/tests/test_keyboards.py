@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+from app.services.dto import DecisionStatus
 from app.bot.keyboards.main_keyboard import (
     get_decision_list_keyboard,
     get_main_menu,
@@ -31,13 +32,13 @@ def test_get_outcome_score_keyboard_has_expected_callbacks():
 def test_get_decision_list_keyboard_truncates_long_text():
     long_problem = "x" * 60
     decisions = [
-        SimpleNamespace(id=1, problem=long_problem),
-        SimpleNamespace(id=2, problem="short"),
+        SimpleNamespace(id=1, problem=long_problem, status=DecisionStatus.NEW),
+        SimpleNamespace(id=2, problem="short", status=DecisionStatus.DECIDED),
     ]
 
     kb = get_decision_list_keyboard(decisions)
 
-    assert kb.inline_keyboard[0][0].text == ("x" * 50 + "...")
+    assert kb.inline_keyboard[0][0].text == ("🆕 " + "x" * 50 + "...")
     assert kb.inline_keyboard[0][0].callback_data == "decision:1"
-    assert kb.inline_keyboard[1][0].text == "short"
+    assert kb.inline_keyboard[1][0].text == "✅ short"
     assert kb.inline_keyboard[1][0].callback_data == "decision:2"

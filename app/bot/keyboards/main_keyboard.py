@@ -1,5 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
+from app.services.dto import DecisionStatus
+
 
 def get_main_menu() -> ReplyKeyboardMarkup:
     """Get main menu keyboard"""
@@ -31,10 +33,19 @@ def get_outcome_score_keyboard() -> InlineKeyboardMarkup:
 
 def get_decision_list_keyboard(decisions: list) -> InlineKeyboardMarkup:
     """Get decision list keyboard"""
+    status_emoji = {
+        DecisionStatus.NEW: "🆕",
+        DecisionStatus.DECIDED: "✅",
+        DecisionStatus.COMPLETED: "🏁",
+    }
+
     keyboard = []
     for decision in decisions:
+        emoji = status_emoji.get(decision.status, "❓")
         # Truncate problem text to 50 chars
-        text = decision.problem[:50] + "..." if len(decision.problem) > 50 else decision.problem
+        text = f"{emoji} {decision.problem[:50]}"
+        if len(decision.problem) > 50:
+            text += "..."
         keyboard.append([InlineKeyboardButton(text=text, callback_data=f"decision:{decision.id}")])
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
