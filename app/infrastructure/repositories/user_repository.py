@@ -34,11 +34,20 @@ class UserRepository(IUserRepository):
             user = await self.create(telegram_id, username)
         return user
 
+    async def increment_max_questions(self, telegram_id: int, increment_on: int) -> None:
+        """Update max_questions"""
+        async with self.session_factory() as session:
+            result = await session.execute(select(User).where(User.telegram_id == telegram_id))
+            user = result.scalar_one()
+            user.max_questions += increment_on
+            await session.commit()
+
     def _to_dto(self, user: User) -> UserDTO:
         """Convert SQLAlchemy model to DTO"""
         return UserDTO(
             id=user.id,
             telegram_id=user.telegram_id,
             username=user.username,
+            max_questions=user.max_questions,
             created_at=user.created_at,
         )

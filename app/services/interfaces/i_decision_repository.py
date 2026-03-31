@@ -41,3 +41,8 @@ class IDecisionRepository(ABC):
     async def get_decisions_for_follow_up(self, days_ago: int) -> list[DecisionDTO]:
         """Get decisions that need follow-up"""
         pass
+
+    @abstractmethod
+    async def count_user_decisions(self, user_id: int) -> int:
+        """Count user decisions"""
+        pass

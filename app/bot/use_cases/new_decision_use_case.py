@@ -8,6 +8,7 @@ from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard
 from app.bot.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
+from app.services.interfaces.i_decision_repository import IDecisionRepository
 from app.services.interfaces.i_user_repository import IUserRepository
 
 router = Router()
@@ -19,18 +20,26 @@ async def process_problem(
     message: Message,
     state: FSMContext,
     user_repository: IUserRepository = Provide[Container.user_repository],
+    decision_repository: IDecisionRepository = Provide[Container.decision_repository],
 ):
     """Process problem description"""
     if not message.from_user:
         return
-
-    problem = message.text or ""
 
     # Get or create user
     user = await user_repository.get_or_create(
         telegram_id=message.from_user.id,
         username=message.from_user.username,
     )
+
+    # Check question limit
+    count = await decision_repository.count_user_decisions(user.id)
+    if count >= user.max_questions:
+        await message.answer("достигнут лимит сообщений", reply_markup=get_main_menu())
+        await state.clear()
+        return
+
+    problem = message.text or ""
 
     # Save problem to state
     await state.update_data(problem=problem, user_id=user.id)

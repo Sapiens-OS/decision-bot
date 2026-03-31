@@ -39,18 +39,41 @@ class DummyMessage:
 async def test_process_problem_stores_problem_and_user_and_moves_to_context_state():
     message = DummyMessage(text="Новая задача", user_id=100, username="bob")
     state = DummyState()
-    user_repository = SimpleNamespace(get_or_create=AsyncMock(return_value=SimpleNamespace(id=55)))
+    user_repository = SimpleNamespace(get_or_create=AsyncMock(return_value=SimpleNamespace(id=55, max_questions=10)))
+    decision_repository = SimpleNamespace(count_user_decisions=AsyncMock(return_value=5))
 
     await process_problem(
         message=message,
         state=state,
         user_repository=user_repository,
+        decision_repository=decision_repository,
     )
 
     user_repository.get_or_create.assert_awaited_once_with(telegram_id=100, username="bob")
+    decision_repository.count_user_decisions.assert_awaited_once_with(55)
     assert state.data["problem"] == "Новая задача"
     assert state.data["user_id"] == 55
     assert state.current_state == NewDecisionStates.waiting_for_context
+
+
+async def test_process_problem_limit_reached():
+    message = DummyMessage(text="Новая задача", user_id=100, username="bob")
+    state = DummyState()
+    user_repository = SimpleNamespace(get_or_create=AsyncMock(return_value=SimpleNamespace(id=55, max_questions=5)))
+    decision_repository = SimpleNamespace(count_user_decisions=AsyncMock(return_value=5))
+
+    await process_problem(
+        message=message,
+        state=state,
+        user_repository=user_repository,
+        decision_repository=decision_repository,
+    )
+
+    message.answer.assert_called_once()
+    args, kwargs = message.answer.call_args
+    assert "достигнут лимит сообщений" in args[0]
+    assert state.current_state is None
+    assert "problem" not in state.data
 
 
 async def test_process_context_success_with_skip_creates_decision_and_sets_selection_state():

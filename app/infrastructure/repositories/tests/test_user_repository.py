@@ -24,3 +24,14 @@ async def test_get_or_create_returns_existing_user_without_duplicates(user_repos
         users_count = await session.scalar(select(func.count(User.id)))
 
     assert users_count == 1
+
+
+async def test_increment_max_questions_increases_value(user_repository):
+    telegram_id = 3003
+    user = await user_repository.create(telegram_id=telegram_id, username="tester")
+    initial_max = user.max_questions
+
+    await user_repository.increment_max_questions(telegram_id, 5)
+
+    updated = await user_repository.get_by_telegram_id(telegram_id)
+    assert updated.max_questions == initial_max + 5

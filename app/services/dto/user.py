@@ -9,4 +9,5 @@ class UserDTO:
     id: int
     telegram_id: int
     username: str | None
+    max_questions: int
     created_at: datetime

@@ -1,4 +1,4 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from datetime import datetime, timedelta, UTC
 from sqlalchemy.orm import joinedload
@@ -91,6 +91,12 @@ class DecisionRepository(IDecisionRepository):
                 )
             )
             return [self._to_dto(d) for d in result.scalars().all()]
+
+    async def count_user_decisions(self, user_id: int) -> int:
+        """Count user decisions"""
+        async with self.session_factory() as session:
+            result = await session.execute(select(func.count()).where(Decision.user_id == user_id))
+            return result.scalar_one()
 
     def _to_dto(self, decision: Decision) -> DecisionDTO:
         """Convert SQLAlchemy model to DTO"""

@@ -19,3 +19,8 @@ class IUserRepository(ABC):
     async def get_or_create(self, telegram_id: int, username: str | None = None) -> UserDTO:
         """Get existing user or create new one"""
         pass
+
+    @abstractmethod
+    async def increment_max_questions(self, telegram_id: int, increment_on: int) -> None:
+        """Update max_questions"""
+        pass
