@@ -8,6 +8,7 @@ from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard
 from app.bot.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
+from app.infrastructure.utils.text_utils import split_text
 from app.services.interfaces.i_decision_repository import IDecisionRepository
 from app.services.interfaces.i_user_repository import IUserRepository
 
@@ -84,12 +85,18 @@ async def process_context(
         await loading_msg.delete()
 
         # Send analysis
-        await message.answer(
+        analysis_text = (
             f"✅ Вот мой анализ:\n\n{decision.analysis}\n\n"
-            f"Какой вариант вы выбираете? Напишите его или опишите свой:",
-            reply_markup=get_main_menu(),
-            parse_mode="Markdown",
+            f"Какой вариант вы выбираете? Напишите его или опишите свой:"
         )
+        
+        chunks = split_text(analysis_text)
+        for i, chunk in enumerate(chunks):
+            await message.answer(
+                chunk,
+                reply_markup=get_main_menu() if i == len(chunks) - 1 else None,
+                parse_mode="Markdown",
+            )
 
         # Save decision ID to state
         await state.update_data(decision_id=decision.id)

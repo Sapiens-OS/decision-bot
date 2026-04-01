@@ -9,6 +9,7 @@ from app.services.dto import DecisionStatus
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.core.container import Container
 from app.core.logger import logger
+from app.infrastructure.utils.text_utils import split_text
 
 router = Router()
 
@@ -89,7 +90,12 @@ async def show_decision(
         if decision.selected_option:
             text += f"🎯 Выбранный вариант:\n{decision.selected_option}\n\n"
 
-        await callback.message.answer(text, reply_markup=get_main_menu())
+        chunks = split_text(text)
+        for i, chunk in enumerate(chunks):
+            await callback.message.answer(
+                chunk,
+                reply_markup=get_main_menu() if i == len(chunks) - 1 else None,
+            )
         await callback.answer()
 
     except Exception as e:
