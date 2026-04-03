@@ -128,14 +128,14 @@ async def process_selection(
     selected_option = message.text or ""
 
     # Build confirmation text
-    confirm_text = f"Для вопроса: {problem}\n"
+    confirm_text = f"***✅ Для вопроса:*** {problem}\n"
     if context_data and "additional_info" in context_data:
         confirm_text += f"Контекст: {context_data['additional_info']}\n"
-    confirm_text += f"Выбрано решение: {selected_option}\n\n"
-    confirm_text += "Все верно, сохраняем?"
+    confirm_text += f"\n***🎯 Выбрано решение:*** {selected_option}\n\n"
+    confirm_text += "***Все верно, сохраняем?***"
 
     await state.update_data(selected_option=selected_option)
-    await message.answer(confirm_text, reply_markup=get_confirmation_keyboard())
+    await message.answer(confirm_text, reply_markup=get_confirmation_keyboard(), parse_mode="Markdown",)
     await state.set_state(NewDecisionStates.waiting_for_confirmation)
 
 
