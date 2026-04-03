@@ -7,6 +7,7 @@ class NewDecisionStates(StatesGroup):
     waiting_for_problem = State()
     waiting_for_context = State()
     waiting_for_selection = State()
+    waiting_for_confirmation = State()
 
 
 class OutcomeStates(StatesGroup):

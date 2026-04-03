@@ -2,7 +2,12 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 from app.bot.states import NewDecisionStates
-from app.bot.use_cases.new_decision_use_case import process_context, process_problem, process_selection
+from app.bot.use_cases.new_decision_use_case import (
+    process_context,
+    process_problem,
+    process_selection,
+    process_confirmation,
+)
 
 
 class DummyState:
@@ -108,24 +113,36 @@ async def test_process_context_failure_clears_state_and_sends_error():
     assert state.current_state is None
 
 
-async def test_process_selection_success_updates_decision_and_clears_state():
+async def test_process_selection_moves_to_confirmation_state():
     message = DummyMessage(text="мой выбор")
-    state = DummyState(data={"decision_id": 88})
+    state = DummyState(data={"problem": "купить машину", "decision_id": 88})
+
+    await process_selection(message=message, state=state)
+
+    assert state.data["selected_option"] == "мой выбор"
+    assert state.current_state == NewDecisionStates.waiting_for_confirmation
+    message.answer.assert_called_once()
+    assert "Все верно, сохраняем?" in message.answer.call_args[0][0]
+
+
+async def test_process_confirmation_yes_updates_decision_and_clears_state():
+    message = DummyMessage(text="✅ Да")
+    state = DummyState(data={"decision_id": 88, "selected_option": "мой выбор"})
     decision_service = SimpleNamespace(select_option=AsyncMock())
 
-    await process_selection(message=message, state=state, decision_service=decision_service)
+    await process_confirmation(message=message, state=state, decision_service=decision_service)
 
     decision_service.select_option.assert_awaited_once_with(88, "мой выбор")
     assert state.data == {}
     assert state.current_state is None
 
 
-async def test_process_selection_failure_still_clears_state():
-    message = DummyMessage(text="мой выбор")
-    state = DummyState(data={"decision_id": 88})
-    decision_service = SimpleNamespace(select_option=AsyncMock(side_effect=RuntimeError("db err")))
+async def test_process_confirmation_change_moves_back_to_selection_state():
+    message = DummyMessage(text="✏️ Поменять решение")
+    state = DummyState(data={"decision_id": 88, "selected_option": "мой выбор"})
+    decision_service = SimpleNamespace(select_option=AsyncMock())
 
-    await process_selection(message=message, state=state, decision_service=decision_service)
+    await process_confirmation(message=message, state=state, decision_service=decision_service)
 
-    assert state.data == {}
-    assert state.current_state is None
+    decision_service.select_option.assert_not_called()
+    assert state.current_state == NewDecisionStates.waiting_for_selection

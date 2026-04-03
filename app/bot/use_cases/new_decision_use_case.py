@@ -4,7 +4,7 @@ from aiogram.types import Message
 from dependency_injector.wiring import inject, Provide
 
 from app.bot.states import NewDecisionStates
-from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard
+from app.bot.keyboards.main_keyboard import get_main_menu, get_skip_keyboard, get_confirmation_keyboard
 from app.bot.interfaces.i_decision_service import IDecisionService
 from app.core.container import Container
 from app.core.logger import logger
@@ -70,6 +70,9 @@ async def process_context(
     if message.text != "⏭️ Пропустить":
         context = {"additional_info": message.text or ""}
 
+    # Save context to state
+    await state.update_data(context=context)
+
     # Show loading message
     loading_msg = await message.answer("🤔 Анализирую ситуацию...", reply_markup=get_main_menu())
 
@@ -117,31 +120,63 @@ async def process_context(
 async def process_selection(
     message: Message,
     state: FSMContext,
+):
+    """Confirm selected option"""
+    data = await state.get_data()
+    problem = data["problem"]
+    context_data = data.get("context")
+    selected_option = message.text or ""
+
+    # Build confirmation text
+    confirm_text = f"Для вопроса: {problem}\n"
+    if context_data and "additional_info" in context_data:
+        confirm_text += f"Контекст: {context_data['additional_info']}\n"
+    confirm_text += f"Выбрано решение: {selected_option}\n\n"
+    confirm_text += "Все верно, сохраняем?"
+
+    await state.update_data(selected_option=selected_option)
+    await message.answer(confirm_text, reply_markup=get_confirmation_keyboard())
+    await state.set_state(NewDecisionStates.waiting_for_confirmation)
+
+
+@router.message(NewDecisionStates.waiting_for_confirmation)
+@inject
+async def process_confirmation(
+    message: Message,
+    state: FSMContext,
     decision_service: IDecisionService = Provide[Container.decision_service],
 ):
-    """Process selected option"""
-    data = await state.get_data()
-    decision_id = data["decision_id"]
-    selected_option = message.text
+    """Process decision confirmation"""
+    if message.text == "✅ Да":
+        data = await state.get_data()
+        decision_id = data["decision_id"]
+        selected_option = data["selected_option"]
 
-    try:
-        # Update decision with selected option
-        await decision_service.select_option(decision_id, message.text or "")
+        try:
+            # Update decision with selected option
+            await decision_service.select_option(decision_id, selected_option)
 
+            await message.answer(
+                f"✅ Отлично! Ваше решение сохранено:\n\n"
+                f"🎯 {selected_option}\n\n"
+                f"Я напомню вам об этом решении через 7, 30 и 90 дней, "
+                f"чтобы понять, как всё сработало.",
+                reply_markup=get_main_menu(),
+                parse_mode="Markdown",
+            )
+        except Exception as e:
+            logger.error(f"Error saving selected option: {e}")
+            await message.answer(
+                "❌ Произошла ошибка при сохранении. Попробуйте позже.",
+                reply_markup=get_main_menu(),
+            )
+        await state.clear()
+    elif message.text == "✏️ Поменять решение":
         await message.answer(
-            f"✅ Отлично! Ваше решение сохранено:\n\n"
-            f"🎯 {selected_option}\n\n"
-            f"Я напомню вам об этом решении через 7, 30 и 90 дней, "
-            f"чтобы понять, как всё сработало.",
-            reply_markup=get_main_menu(),
-            parse_mode="Markdown",
-        )
-
-    except Exception as e:
-        logger.error(f"Error saving selected option: {e}")
-        await message.answer(
-            "❌ Произошла ошибка при сохранении. Попробуйте позже.",
+            "Напишите новое решение или выберите из предложенных ранее:",
             reply_markup=get_main_menu(),
         )
-
-    await state.clear()
+        await state.set_state(NewDecisionStates.waiting_for_selection)
+    else:
+        # If user just sent text, interpret it as a new decision and ask for confirmation again
+        await process_selection(message, state)

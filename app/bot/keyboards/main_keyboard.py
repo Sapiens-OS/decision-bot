@@ -54,3 +54,12 @@ def get_skip_keyboard() -> ReplyKeyboardMarkup:
     """Get skip keyboard"""
     keyboard = [[KeyboardButton(text="⏭️ Пропустить")]]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
+
+
+def get_confirmation_keyboard() -> ReplyKeyboardMarkup:
+    """Get confirmation keyboard"""
+    keyboard = [
+        [KeyboardButton(text="✅ Да")],
+        [KeyboardButton(text="✏️ Поменять решение")],
+    ]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)

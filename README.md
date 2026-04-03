@@ -2,21 +2,7 @@
 
 Decision Assistant telegram bot that helps users make conscious decisions.
 
-# Создать .env файл
-`cp .env.example .env`
-
-# Запустить через Docker
-`docker-compose up -d`
-
-# Или локально
-```
-poetry install
-docker-compose up -d postgres redis
-poetry run python -m app.main
-poetry run celery -A app.tasks.celery_app worker --loglevel=info
-poetry run celery -A app.tasks.celery_app beat --loglevel=info
-```
-## Features
+## Описание (Features)
 
 - 📝 Create and analyze decisions with AI
 - 📚 Store decision history
@@ -24,17 +10,7 @@ poetry run celery -A app.tasks.celery_app beat --loglevel=info
 - 🎯 Track decision outcomes
 - 🧠 Structured decision analysis
 
-## Tech Stack
-
-- Python 3.12+
-- aiogram 3.x (Telegram Bot API)
-- PostgreSQL (Database)
-- SQLAlchemy 2.0+ (Async ORM)
-- OpenAI API (GPT-4o-mini)
-- Celery + Redis (Background tasks)
-- Docker + Docker Compose
-
-## Architecture
+### Architecture
 
 ```
 app/
@@ -59,7 +35,7 @@ app/
 └── main.py             # Entry point
 ```
 
-### Кто за что отвечает
+#### Кто за что отвечает
 
 **bot**
 Телеграм бот, роутеры, юз-кейсы для команд бота, бизнес-логика формирования сообщений
@@ -73,193 +49,151 @@ app/
 **infrastructure**
 Взаимодействие с БД, модели, CRUD операции
 
-## Setup
+## Стек (Tech Stack)
 
-### 1. Clone repository
+- Python 3.12+
+- aiogram 3.x (Telegram Bot API)
+- PostgreSQL (Database)
+- SQLAlchemy 2.0+ (Async ORM)
+- OpenAI API (GPT-4o-mini)
+- Celery + Redis (Background tasks)
+- Docker + Docker Compose
 
+## Как запускать (различные варианты)
+
+### Подготовка
+1. Clone repository:
 ```bash
 git clone <repository-url>
 cd decision-bot
 ```
-
-### 2. Create .env file
-
+2. Create `.env` file and set your credentials:
 ```bash
 cp .env.example .env
 ```
-
-Edit `.env` and set your credentials:
 - `BOT_TOKEN` - Telegram bot token from @BotFather
 - `OPENAI_API_KEY` - OpenAI API key
 - `DATABASE_URI` - PostgreSQL connection string
 
-### 3. Run with Docker Compose
-
+### 1. Через Docker (самый простой способ)
 ```bash
 docker-compose build
 docker-compose up -d
 ```
+Это запустит: PostgreSQL, Redis, Bot, Celery worker и Celery beat.
 
-This will start:
-- PostgreSQL database
-- Redis
-- Bot (Telegram bot)
-- Celery worker (background tasks)
-- Celery beat (scheduler)
+### 2. Локально (Development)
 
-### 4. Check logs
-
-```bash
-docker-compose logs -f bot
-```
-
-## Local Development
-
-### 1. Install dependencies
-
+#### Шаг 1: Установка зависимостей
 ```bash
 poetry install
 ```
 
-### 2. Start PostgreSQL and Redis
-
+#### Шаг 2: Запуск базы данных и Redis
 ```bash
 docker-compose up -d postgres redis
 ```
 
-### 3. Run migrations
-
+#### Шаг 3: Миграции
 ```bash
 poetry run alembic upgrade head
 ```
 
-### 4. Run bot
-
+#### Шаг 4: Запуск проекта (Bot)
 ```bash
 export PYTHONPATH=$(pwd)
 poetry run python -m app.main
 ```
 
-### 5. Run Celery worker
-
-```bash
-poetry run celery -A app.tasks.celery_app worker --loglevel=info
-```
-
-### 6. Run Celery beat
-
-```bash
-poetry run celery -A app.tasks.celery_app beat --loglevel=info
-```
-
-## Usage
-
-### Commands
-
-- `/start` - Start bot
-- `/new` - Create new decision
-- `/history` - View decision history
-
-### Creating a decision
-
-1. Send `/new` command
-2. Describe your situation
-3. Provide additional context (optional)
-4. Review AI analysis
-5. Select your option
-6. Decision is saved
-
-### Follow-up
-
-Bot will send follow-up messages after 7, 30, and 90 days asking about the outcome of your decision.
-
-## Celery Commands
-
+#### Шаг 5: Запуск Celery
 ```bash
 # Run worker
 poetry run celery -A app.tasks.celery_app worker --loglevel=info
 
-# Run worker with beat
+# Run worker with beat (or separate)
+poetry run celery -A app.tasks.celery_app beat --loglevel=info
+
+# Или запустить все вместе в одном процессе
 poetry run celery -A app.tasks.celery_app worker --beat --loglevel=info
-
-# Purge all tasks
-poetry run celery -A app.tasks.celery_app purge
-
-# Inspect active tasks
-celery -A app.tasks.celery_app inspect active
-
-# Inspect reserved tasks
-celery -A app.tasks.celery_app inspect reserved
 ```
 
-## Database Migrations
-
+## Миграции (Alembic)
 ```bash
-# Create initial migration
+# Создать начальную миграцию
 poetry run alembic revision --autogenerate -m "Initial"
 
-# Create migration
+# Создать новую миграцию после изменений в моделях
 poetry run alembic revision --autogenerate -m "Description"
 
-# Apply migrations
+# Применить миграции
 poetry run alembic upgrade head
 
-# Rollback migration
+# Откатить миграцию
 poetry run alembic downgrade -1
 ```
 
-## Testing
+## Тесты и линтеры
 
+### Тесты
 ```bash
 poetry run pytest
 ```
 
-## Linters
-
+### Линтеры
 ```bash
+# Black (formatting)
 poetry run black ./
+
+# Flake8 (style guide)
 poetry run flake8
+
+# Mypy (type checking)
 poetry run mypy --ignore-missing-import --explicit-package-bases --check-untyped-defs ./
 ```
 
-## PyCharm Setup
+## Остальная информация
 
-```bash
-poetry env info --path
-# or
-poetry config virtualenvs.in-project true
-```
+### Usage & Commands
+- `/start` - Start bot
+- `/new` - Create new decision
+- `/history` - View decision history
 
-1. Open `PyCharm`
-2. Go to **File** → **Settings** (or **PyCharm** → **Preferences** on macOS)
-3. Go to **Project** → **Python Interpreter**
-4. Click gear icon and select **Add...**
-5. Select **Existing environment**
-6. Specify path to interpreter from poetry env
+**Создание решения:**
+1. Отправьте `/new`.
+2. Опишите ситуацию.
+3. Добавьте контекст (опционально).
+4. Ознакомьтесь с анализом AI.
+5. Выберите вариант.
+6. Решение сохранено.
 
-## Webhook Setup (for production)
+**Follow-up:**
+Бот отправит уведомления через 7, 30 и 90 дней, чтобы узнать результат принятого решения.
 
+### PyCharm Setup
+1. Получите путь к интерпретатору: `poetry env info --path`
+2. В PyCharm: **File** → **Settings** → **Project** → **Python Interpreter**
+3. Нажмите шестеренку → **Add...** → **Existing environment**
+4. Укажите путь к интерпретатору из poetry.
+
+### Webhook Setup (Production)
+Для работы через webhook локально можно использовать ngrok:
 ```bash
 ngrok http 8443
-# or with custom domain
-ngrok http --url=your-domain.ngrok-free.app 8443
 ```
 
-## Environment Variables
-
-| Variable | Description                  | Default |
-|----------|------------------------------|---------|
+### Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
 | DATABASE_URI | PostgreSQL connection string | postgresql+asyncpg://user:password@localhost:5432/sapiens_os |
-| BOT_TOKEN | Telegram bot token           | - |
-| BOT_WEBHOOK_URL | Webhook URL (optional)       | - |
-| BOT_WEBHOOK_PORT | Webhook port                 | 8443 |
-| REDIS_URL | Redis connection string      | redis://localhost:6379/0 |
-| OPENAI_BASE_URL | Optiona OpenAI Base Url      | - |
-| OPENAI_API_KEY | OpenAI API key               | - |
-| OPENAI_MODEL | OpenAI model                 | gpt-4o-mini |
-| CELERY_BROKER_URL | Celery broker URL            | redis://localhost:6379/1 |
-| CELERY_RESULT_BACKEND | Celery result backend        | redis://localhost:6379/2 |
+| BOT_TOKEN | Telegram bot token | - |
+| BOT_WEBHOOK_URL | Webhook URL (optional) | - |
+| BOT_WEBHOOK_PORT | Webhook port | 8443 |
+| REDIS_URL | Redis connection string | redis://localhost:6379/0 |
+| OPENAI_BASE_URL | Optional OpenAI Base Url | - |
+| OPENAI_API_KEY | OpenAI API key | - |
+| OPENAI_MODEL | OpenAI model | gpt-4o-mini |
+| CELERY_BROKER_URL | Celery broker URL | redis://localhost:6379/1 |
+| CELERY_RESULT_BACKEND | Celery result backend | redis://localhost:6379/2 |
 
-## License
-
+### License
 Apache License Version 2.0
