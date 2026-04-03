@@ -11,6 +11,7 @@ from app.config import (
     CELERY_BROKER_URL,
     CELERY_RESULT_BACKEND,
     FOLLOW_UP_INTERVALS,
+    USE_CORE_SERVICES,
 )
 
 
@@ -30,6 +31,7 @@ class Config:
     redis_url: str = REDIS_URL
 
     # OpenAI
+    use_core_services: bool = USE_CORE_SERVICES
     openai_base_url: str = OPENAI_BASE_URL
     openai_api_key: str = OPENAI_API_KEY
     openai_model: str = OPENAI_MODEL

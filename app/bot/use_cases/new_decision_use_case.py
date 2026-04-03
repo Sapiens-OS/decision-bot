@@ -116,7 +116,6 @@ async def process_context(
 
 
 @router.message(NewDecisionStates.waiting_for_selection)
-@inject
 async def process_selection(
     message: Message,
     state: FSMContext,

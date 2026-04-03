@@ -15,6 +15,7 @@ WEBHOOK_PORT = int(os.getenv("BOT_WEBHOOK_PORT", "8443"))
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 # OpenAI
+USE_CORE_SERVICES = os.getenv("USE_CORE_SERVICES", "") == "True"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
